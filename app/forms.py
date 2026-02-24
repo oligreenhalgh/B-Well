@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, PasswordField, RadioField, SubmitField
-from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
+from wtforms import StringField, EmailField, PasswordField, RadioField, SubmitField, IntegerField, TextAreaField
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, NumberRange
 
 #Custom validator to check if email is a University of Birmingham email address
 def is_uni_email(form, field):
@@ -25,3 +25,14 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField("Confirm Password", validators=[DataRequired(message = "Please confirm password"), EqualTo("password", message = "Passwords must match")])
     consent = RadioField("Consent to Data Collection", choices=[('yes', 'Yes'), ('no', 'No')], validators=[DataRequired(message = "Consent required"), must_accept_consent])
     submit = SubmitField("Register")
+
+class WellbeingForm(FlaskForm):
+    stress = IntegerField("Stress Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    sleep = IntegerField("Sleep Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    social = IntegerField("Social Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    academic = IntegerField("Academic Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    activity = IntegerField("Activity Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
+
+    notes = TextAreaField("Additional Notes (Optional)")
+
+    submit = SubmitField("Submit Form")
