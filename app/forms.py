@@ -21,6 +21,8 @@ def must_accept_consent(form, field):
 class RegistrationForm(FlaskForm):
     username = StringField("Username", validators=[DataRequired(message = "Username required")])
     email = EmailField("Email", validators=[DataRequired(message = "Email required"), is_uni_email])
+    course = StringField("Course", validators=[DataRequired(message = "Course required")])
+    year_of_study = RadioField("Year of Study", choices=[('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year'), ('4', '4th Year')], validators=[DataRequired(message = "Year of study required")])
     password = PasswordField("Password", validators=[DataRequired(message = "Password required"), Length(min=8), contains_number])
     confirm_password = PasswordField("Confirm Password", validators=[DataRequired(message = "Please confirm password"), EqualTo("password", message = "Passwords must match")])
     consent = RadioField("Consent to Data Collection", choices=[('yes', 'Yes'), ('no', 'No')], validators=[DataRequired(message = "Consent required"), must_accept_consent])
