@@ -70,9 +70,10 @@ def complete():
             notes = form.notes.data,
             date=date
         )
-
         db.session.add(daily_entry)
         db.session.commit()
+        score = daily_entry.overall_rating()
+        return render_template("score.html", score=score)
 
         flash(f"Form submitted, average score: {daily_entry.overall_rating()}")
         return redirect(url_for('index'))
@@ -88,8 +89,11 @@ def check_notifications():
         # If table doesn't exist, do nothing
         if "notification" not in inspector.get_table_names():
             return
-
-        notification = Notification.query.filter_by(read=False).first()
+        else:
+            notification = Notification.query.filter_by(read=False).first()
+            flash(notification.message, "info")
+            notification.read = True
+            db.session.commit()
 
     except OperationalError:
         return

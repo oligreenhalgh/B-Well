@@ -1,7 +1,7 @@
 from app import db
 import sqlalchemy.orm as so
 import sqlalchemy as sa
-from datetime import datetime
+from datetime import datetime, timezone
 
 class Notification(db.Model):
     notification_id: so.Mapped[int] = so.mapped_column(primary_key=True)
