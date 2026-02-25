@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Wellbeing Form{% endblock %}
+
+{% block content %}
+<h2>Wellbeing Form</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    {{ form.stress.label }}<br>
+    {{ form.stress(type="range", min=1, max=5, value=3, id="stress-slider") }}<br>
+    <span id="stress-output">3</span><br><br>
+
+    {{ form.sleep.label }}<br>
+    {{ form.sleep(type="range", min=1, max=5, value=3, id="sleep-slider") }}<br>
+    <span id="sleep-output">3</span><br><br>
+
+    {{ form.social.label }}<br>
+    {{ form.social(type="range", min=1, max=5, value=3, id="social-slider") }}<br>
+    <span id="social-output">3</span><br><br>
+
+    {{ form.academic.label }}<br>
+    {{ form.academic(type="range", min=1, max=5, value=3, id="academic-slider") }}<br>
+    <span id="academic-output">3</span><br><br>
+
+    {{ form.activity.label }}<br>
+    {{ form.activity(type="range", min=1, max=5, value=3, id="activity-slider") }}<br>
+    <span id="activity-output">3</span><br><br>
+
+    {{ form.notes.label }}<br>
+    {{ form.notes }}<br><br>
+
+    {{form.submit() }}
+
+</form>
+
+
+
+<script>
+    const stressSlider = document.getElementById("stress-slider");
+    const stressOutput = document.getElementById("stress-output");
+    stressSlider.oninput = function() {
+        stressOutput.innerText = this.value;
+    }
+
+    const sleepSlider = document.getElementById("sleep-slider");
+    const sleepOutput = document.getElementById("sleep-output");
+    sleepSlider.oninput = function() {
+        sleepOutput.innerText = this.value;
+    }
+
+    const socialSlider = document.getElementById("social-slider");
+    const socialOutput = document.getElementById("social-output");
+    socialSlider.oninput = function() {
+        socialOutput.innerText = this.value;
+    }
+
+    const academicSlider = document.getElementById("academic-slider");
+    const academicOutput = document.getElementById("academic-output");
+    academicSlider.oninput = function() {
+        academicOutput.innerText = this.value;
+    }
+
+    const activitySlider = document.getElementById("activity-slider");
+    const activityOutput = document.getElementById("activity-output");
+    activitySlider.oninput = function() {
+        activityOutput.innerText = this.value;
+    }
+</script>
+
+{% endblock %}
