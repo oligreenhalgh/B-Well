@@ -113,7 +113,7 @@ def login():
             return render_template("login.html", form=form)
 
         # success
-        session["email"] = email
+        session["user_id"] = user.user_id
         session["username"] = user.username
 
         flash(f"Welcome back, {user.username}!", "success")
