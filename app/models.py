@@ -1,10 +1,7 @@
-from click.types import UUIDParameterType
-from wtforms.fields.simple import PasswordField
-
 from app import db
 import sqlalchemy.orm as so
 import sqlalchemy as sa
-from datetime import datetime, timezone
+from datetime import datetime
 
 class Notification(db.Model):
     notification_id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -24,16 +21,6 @@ class User(db.Model):
 
     __table_args__ = (db.UniqueConstraint("email"),)
 
-class CheckIn(db.Model):
-    checkin_id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    stress_rating: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False, default=0)
-    social_rating: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False, default=0)
-    academic_rating: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False, default=0)
-    physical_health_rating: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False, default=0)
-    overall_rating: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False, default=0)
-    notes: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
-
-
 class Resource(db.Model):
     resource_id: so.Mapped[int] = so.mapped_column(primary_key=True)
     title: so.Mapped[str] = so.mapped_column(sa.String(256))
@@ -52,14 +39,8 @@ class Wellbeing(db.Model):
 
     notes: so.Mapped[str] = so.mapped_column(sa.String(500), nullable=True)
 
-    submitted_on: so.Mapped[datetime] = so.mapped_column(
-        sa.Date,
-        nullable=False,
-        default=lambda: datetime.now(timezone.utc).date()
-    )
+    date: so.Mapped[datetime] = so.mapped_column(sa.Date, nullable=False)
 
     def overall_rating(self):
-        return round(
-            (self.stress + self.sleep + self.social + self.academic + self.activity) / 5
-        )
+        return round((self.stress + self.sleep + self.social + self.academic + self.activity) / 5)
 

@@ -5,11 +5,13 @@ from app.models import Wellbeing, Notification, User
 from flask import session, json, flash, url_for, redirect, render_template, current_app
 from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError, OperationalError
+from datetime import datetime, timezone
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    '''
     user_id = session.get("user_id")
     daily_averages = {}
     if user_id:
@@ -28,6 +30,9 @@ def index():
             daily_averages[date] = round(daily_totals[date] / daily_counts[date], 2)
 
     return render_template("index.html", daily_scores=daily_averages)
+    '''
+
+    return render_template("index.html")
 
 @app.route("/registration", methods=["GET", "POST"])
 def registration():
@@ -48,12 +53,13 @@ def registration():
         except IntegrityError:
             db.session.rollback()
             flash(f"User already exists")
-            return redirect(url_for('registration'))
+            return redirect(url_for('complete'))
     return render_template("registration.html", form=form)
 
 @app.route("/wellbeing", methods=['GET','POST'])
 def complete():
     form = WellbeingForm()
+    date = datetime.now(timezone.utc).date()
     if form.validate_on_submit():
         daily_entry = Wellbeing(
             stress = form.stress.data,
@@ -62,20 +68,20 @@ def complete():
             academic = form.academic.data,
             activity = form.activity.data,
             notes = form.notes.data,
-            date = form.date.data
+            date=date
         )
 
         db.session.add(daily_entry)
         db.session.commit()
 
-        flash(f"Form submitted")
+        flash(f"Form submitted, average score: {daily_entry.overall_rating()}")
         return redirect(url_for('index'))
 
     return render_template("wellbeing_form.html", form=form)
 
 @app.before_request
 def check_notifications():
-    # Fix for if notifcation table doesn't exist
+    # Fix for if notification table doesn't exist
     try:
         inspector = inspect(db.engine)
 
@@ -117,19 +123,16 @@ def login():
         session["username"] = user.username
 
         flash(f"Welcome back, {user.username}!", "success")
-        return redirect(url_for("index"))
+        return redirect(url_for("complete"))
 
     return render_template("login.html", form=form)
 
 #Logs users out of the session individually
 @app.route("/logout")
 def logout():
-    session.pop("user_id", None)
-    session.pop("username", None)
-
+    session.clear()
     flash("You have been logged out.", "info")
     return redirect(url_for("index"))
-
 
 
 
