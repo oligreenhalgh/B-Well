@@ -3,7 +3,7 @@ from app import app, db
 from app.forms import RegistrationForm, WellbeingForm, LoginForm
 from app.models import Wellbeing, Notification, User
 from flask import session, json, flash, url_for, redirect, render_template, current_app
-
+from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route("/", methods=["GET", "POST"])
@@ -15,19 +15,21 @@ def registration():
     form = RegistrationForm()
     if form.validate_on_submit(): #Check if the form is submitted and valid
         user = User(
-        name = form.username.data,
+        username = form.username.data,
         email = form.email.data,
         course = form.course.data,
         year_of_study = form.year_of_study.data,
-        password = generate_password_hash(form.password.data),
-        consent = form.consent.data
+        password = generate_password_hash(form.password.data)
         )
-        db.session.add(user)
-        db.session.commit()
-        #TO-DO: Store user data in database (use security measures for password)
-
-        flash(f"Registration successful")
-        return redirect(url_for("index")) #TO-DO: Change this to redirect to home page once created
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash(f"Registration successfully")
+            return redirect(url_for('index'))
+        except IntegrityError:
+            db.session.rollback()
+            flash(f"User already exists")
+            return redirect(url_for('registration'))
     return render_template("registration.html", form=form)
 
 @app.route("/wellbeing", methods=['GET','POST'])
@@ -74,21 +76,21 @@ def login():
         email = form.email.data.lower().strip()
         password = form.password.data
 
-        user = User.query.filter_by(email=email)
+        user = User.query.filter_by(email=email).first()
 
         if not user:
             flash("Invalid email or password.", "danger")
             return render_template("login.html", form=form)
 
-        if not check_password_hash(user["password"], password):
+        if not check_password_hash(user.password, password):
             flash("Invalid email or password.", "danger")
             return render_template("login.html", form=form)
 
         # success
-        session["user_id"] = email  # later replace with actual user.id
-        session["username"] = user["username"]
+        session["email"] = email
+        session["username"] = user.username
 
-        flash(f"Welcome back, {user['username']}!", "success")
+        flash(f"Welcome back, {user.username}!", "success")
         return redirect(url_for("index"))
 
     return render_template("login.html", form=form)
