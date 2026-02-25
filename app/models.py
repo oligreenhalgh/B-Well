@@ -16,12 +16,13 @@ class Notification(db.Model):
 
 class User(db.Model):
     user_id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    name: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
+    username: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
     email: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
     course: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
     year_of_study: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False, default=0)
     password: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
-    consent: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
+
+    __table_args__ = (db.UniqueConstraint("email"),)
 
 class CheckIn(db.Model):
     checkin_id: so.Mapped[int] = so.mapped_column(primary_key=True)
