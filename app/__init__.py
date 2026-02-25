@@ -12,3 +12,6 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 from app import routes, models
+
+from app.scheduler import start_scheduler
+start_scheduler(app)

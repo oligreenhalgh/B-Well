@@ -1,10 +1,10 @@
 import os
 from app import app, db
 from app.forms import RegistrationForm, WellbeingForm
-from app.models import Wellbeing
+from app.models import Wellbeing, Notification
 from flask import session, json, flash, url_for, redirect, render_template, current_app
 
-@app.route("/", methods=["GET", "POST"]) #Route for page with registration and log in links
+@app.route("/", methods=["GET", "POST"])
 def index():
     return render_template("index.html")
 
@@ -37,3 +37,12 @@ def complete():
         return redirect(url_for('complete'))
 
     return render_template("wellbeing_form.html", form=form)
+
+@app.before_request
+def check_notifications():
+    notification = Notification.query.filter_by(read=False).first()
+
+    if notification:
+        flash(notification.message, "info")
+        notification.read = True
+        db.session.commit()
