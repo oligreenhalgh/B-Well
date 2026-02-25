@@ -6,7 +6,6 @@ import sqlalchemy as sa
 from datetime import datetime, timezone
 
 class Notification(db.Model):
-    __bind_key__ = 'notifications'
     notification_id: so.Mapped[int] = so.mapped_column(primary_key=True)
     message: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
     noti_date: so.Mapped[datetime] = so.mapped_column(sa.DATE, nullable=False, default=lambda: datetime.now(timezone.utc))
