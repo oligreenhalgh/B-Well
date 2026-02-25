@@ -1,52 +1,86 @@
 {% extends "base.html" %}
+{% block title %}B-WELL | Registration{% endblock %}
 
 {% block content %}
+<section class="page">
+  <div class="page-inner">
+    <div class="card">
+      <h1>Registration</h1>
 
-    <h1>Registration</h1>
+      <form method="POST" action="{{ url_for('registration') }}" novalidate>
+        {{ form.hidden_tag() }}
 
-     <form action='' method="post" novalidate>
-         {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username }}<br>
-        </p>
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email }}<br>
-        </p>
-        <p>
-            {{ form.course.label }}<br>
-            {{ form.course }}<br>
-        </p>
-        <p>
-            {{ form.year_of_study.label }}<br>
-            {{ form.year_of_study }}<br>
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password }}<br>
-        </p>
-        <p>
-            {{ form.confirm_password.label }}<br>
-            {{ form.confirm_password }}<br>
-        </p>
-        <p>
-            {{ form.consent.label }}<br>
-            {{ form.consent }}<br>
-        </p>
+        <div class="form-row">
+          {{ form.username.label }}
+          {{ form.username() }}
+          {% for err in form.username.errors %}
+            <p class="error">{{ err }}</p>
+          {% endfor %}
+        </div>
 
-         {% if form.errors %}
-            <ul>
+        <div class="form-row">
+          {{ form.email.label }}
+          {{ form.email() }}
+          {% for err in form.email.errors %}
+            <p class="error">{{ err }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-row">
+          {{ form.password.label }}
+          {{ form.password() }}
+          {% for err in form.password.errors %}
+            <p class="error">{{ err }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-row">
+          {{ form.confirm_password.label }}
+          {{ form.confirm_password() }}
+          {% for err in form.confirm_password.errors %}
+            <p class="error">{{ err }}</p>
+          {% endfor %}
+        </div>
+        <div class="form-row">
+            {{ form.course.label }}
+            {{ form.course }}
+        </div>
+        <div class="form-row">
+            {{ form.year_of_study.label }}
+            {{ form.year_of_study }}
+        </div>
+        <div class="form-row">
+          {{ form.consent.label }}
+          <div class="radio-group">
+            {{ form.consent() }}
+          </div>
+          {% for err in form.consent.errors %}
+            <p class="error">{{ err }}</p>
+          {% endfor %}
+        </div>
+
+        <div class="form-actions">
+          {{ form.submit(class_="btn btn-primary") }}
+        </div>
+
+        {# Optional: keep a full list of errors too (useful for debugging) #}
+        {% if form.errors %}
+          <ul class="form-hint">
             {% for field, errors in form.errors.items() %}
-                {% for err in errors %}
-                    <li>{{ err }}</li>
-                {% endfor %}
+              {% for err in errors %}
+                <li>{{ err }}</li>
+              {% endfor %}
             {% endfor %}
-            </ul>
+          </ul>
         {% endif %}
 
-        <p>{{ form.submit() }}</p>
+      </form>
 
-     </form>
-
+      <p class="form-hint">
+        Already have an account?
+        <a href="{{ url_for('login') }}">Login</a>
+      </p>
+    </div>
+  </div>
+</section>
 {% endblock %}

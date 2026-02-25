@@ -1,0 +1,336 @@
+/* ================================
+   B-WELL – Complete Clean Styles
+   ================================= */
+
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+
+/* Reset */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+html,body{
+  height:100%;
+}
+
+body{
+  font-family:'Montserrat', sans-serif;
+  background:#041d1f;
+  color:white;
+  overflow-x:hidden;
+}
+
+
+/* ================================
+   HEADER / NAV
+   ================================= */
+
+.site-header{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+
+  background:rgba(0,0,0,0.25);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,0.08);
+}
+
+.nav{
+  height:72px;
+  padding:0 32px;
+  position: relative;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+}
+
+/* Left Wordmark */
+.brand{
+  justify-self:start;
+  display:inline-flex;
+  align-items:center;
+  text-decoration:none;
+}
+
+.brand-logo{
+  height:50px;       /* change this to resize */
+  width:auto;
+  display:block;
+}
+
+/* Center Mark */
+.nav-center{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.nav-center-logo{
+  width:36px;
+  height:36px;
+  opacity:0.95;
+}
+
+/* Right Section */
+.nav-right{
+  justify-self:end;
+  display:inline-flex;
+  align-items:center;
+  gap:18px;
+}
+
+.nav-links{
+  display:inline-flex;
+  align-items:center;
+  gap:28px;
+}
+
+.nav-link{
+  text-decoration:none;
+  color:rgba(255,255,255,0.85);
+  font-size:12px;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  font-weight:600;
+  transition:0.2s ease;
+}
+
+.nav-link:hover{
+  color:white;
+}
+
+/* Burger */
+.nav-menu{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,0.15);
+  background:rgba(0,0,0,0.2);
+  display:grid;
+  place-items:center;
+  cursor:pointer;
+}
+
+.nav-menu span{
+  display:block;
+  width:18px;
+  height:2px;
+  background:white;
+  margin:3px 0;
+  border-radius:100px;
+}
+
+
+/* ================================
+   HERO SECTION
+   ================================= */
+
+.hero{
+  min-height:100vh;
+  padding-top:72px; /* offset fixed nav */
+  position:relative;
+
+  background:url("/static/image/bwellbackground.jpg") center/cover no-repeat;
+  display:flex;
+  align-items:center;
+}
+
+.hero-overlay{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(
+    90deg,
+    rgba(0,0,0,0.75) 0%,
+    rgba(0,0,0,0.45) 45%,
+    rgba(0,0,0,0.1) 100%
+  );
+}
+
+.hero-inner{
+  position:relative;
+  z-index:2;
+  max-width:700px;
+  margin-left:8%;
+}
+
+.hero-kicker{
+  font-size:13px;
+  letter-spacing:0.25em;
+  text-transform:uppercase;
+  opacity:0.8;
+  margin-bottom:22px;
+}
+
+.hero-title{
+  font-size:clamp(60px,8vw,120px);
+  font-weight:900;
+  line-height:0.95;
+  margin-bottom:26px;
+}
+
+.hero-subtitle{
+  font-size:16px;
+  line-height:1.6;
+  opacity:0.9;
+  margin-bottom:36px;
+}
+
+/* Buttons */
+.btn{
+  display:inline-block;
+  padding:16px 38px;
+  border-radius:999px;
+  text-decoration:none;
+  font-weight:700;
+  font-size:14px;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  transition:0.2s ease;
+}
+
+.btn-primary{
+  background:#54d2b5;
+  color:#032a2c;
+}
+
+.btn-primary:hover{
+  background:#3cc7a8;
+  transform:translateY(-2px);
+}
+
+
+/* ================================
+   FORMS (Login / Register)
+   ================================= */
+
+form{
+  max-width:420px;
+  margin:120px auto;
+  background:rgba(0,0,0,0.35);
+  padding:40px;
+  border-radius:16px;
+  backdrop-filter:blur(12px);
+}
+
+form h1{
+  margin-bottom:24px;
+}
+
+form div,
+form p{
+  margin-bottom:18px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"]{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.15);
+  background:rgba(0,0,0,0.4);
+  color:white;
+  font-family:inherit;
+}
+
+input:focus{
+  outline:none;
+  border-color:#54d2b5;
+}
+
+input[type="submit"],
+button[type="submit"]{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:999px;
+  background:#54d2b5;
+  color:#032a2c;
+  font-weight:700;
+  cursor:pointer;
+  transition:0.2s ease;
+}
+
+input[type="submit"]:hover{
+  background:#3cc7a8;
+}
+
+.error{
+  color:#ff6b6b;
+  font-size:13px;
+}
+
+
+/* ================================
+   FLASH MESSAGES
+   ================================= */
+
+.flashes{
+  position:fixed;
+  top:90px;
+  left:50%;
+  transform:translateX(-50%);
+  list-style:none;
+  z-index:2000;
+}
+
+.flash{
+  padding:14px 24px;
+  border-radius:999px;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+.flash-success{
+  background:#54d2b5;
+  color:#042b2d;
+}
+
+.flash-danger{
+  background:#ff6b6b;
+  color:white;
+}
+
+.flash-info{
+  background:#3aa0ff;
+  color:white;
+}
+
+
+/* ================================
+   RESPONSIVE
+   ================================= */
+
+@media (max-width:768px){
+
+  .hero-inner{
+    margin-left:6%;
+    margin-right:6%;
+  }
+
+  .nav{
+    padding:0 18px;
+  }
+
+  .nav-links{
+    gap:16px;
+  }
+
+  .brand-logo{
+    height:26px;
+  }
+
+  .nav-center-logo{
+    width:28px;
+    height:28px;
+  }
+}

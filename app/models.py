@@ -1,4 +1,5 @@
 from click.types import UUIDParameterType
+from wtforms.fields.simple import PasswordField
 
 from app import db
 import sqlalchemy.orm as so
@@ -9,7 +10,7 @@ class Notification(db.Model):
     notification_id: so.Mapped[int] = so.mapped_column(primary_key=True)
     message: so.Mapped[str] = so.mapped_column(sa.String(256),nullable=False)
     created_at: so.Mapped[datetime] = so.mapped_column(
-        sa.DateTime, default=lambda: datetime.now(timezone.utc))
+    sa.DateTime, default=lambda: datetime.now(timezone.utc))
     type: so.Mapped[str] = so.mapped_column(sa.String(256))
     read: so.Mapped[bool] = so.mapped_column(sa.Boolean, nullable=False, default=False)
 
@@ -19,6 +20,8 @@ class User(db.Model):
     email: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
     course: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
     year_of_study: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False, default=0)
+    password: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
+    consent: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
 
 class CheckIn(db.Model):
     checkin_id: so.Mapped[int] = so.mapped_column(primary_key=True)

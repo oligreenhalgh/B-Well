@@ -1,22 +1,72 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-    <title>{% block title %}Home Page{% endblock %}</title>
+  <meta charset="utf-8">
+  <title>{% block title %}B-WELL{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <ul class="flashes">
+        {% for category, message in messages %}
+          <li class="flash flash-{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
 
-<!-- Flash messages -->
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class="flashes">
-      {% for message in messages %}
-        <li>{{ message }}</li>
-      {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+<!-- Conditional login/logout -->
+{% if session.get("user_id") %}
+  <a href="{{ url_for('logout') }}">Logout</a>
+{% else %}
+  <a href="{{ url_for('login') }}">Login</a>
+{% endif %}
 
-{% block content %}{% endblock %}
+  <header class="site-header">
+      <nav class="nav">
 
+        <!-- Left: wordmark -->
+        <a class="brand" href="{{ url_for('index') }}">
+          <img class="brand-logo"
+               src="{{ url_for('static', filename='image/BwellLogolong.svg') }}"
+               alt="B-WELL">
+        </a>
+
+        <!-- Center: icon mark -->
+        <a class="nav-center" href="{{ url_for('index') }}" aria-label="Home">
+            <img class="nav-center-logo" src="{{ url_for('static', filename='image/bwelllogo.svg') }}" alt=""></a>
+
+
+        <!-- Right: links + hamburger -->
+        <div class="nav-right">
+          <div class="nav-links">
+            <a class="nav-link" href="{{ url_for('registration') }}">Register</a>
+
+            {% if session.get("user_id") %}
+              <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+            {% else %}
+              <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+          </div>
+
+          <button class="nav-menu" type="button" aria-label="Open menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+  </header>
+
+
+  {% block content %}{% endblock %}
 </body>
 </html>

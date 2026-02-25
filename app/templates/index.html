@@ -1,10 +1,27 @@
 {% extends "base.html" %}
+{% block title %}B-WELL | Home{% endblock %}
 
 {% block content %}
+<section class="hero">
+  <div class="hero-overlay"></div>
 
-    <h1>Home</h1>
+  <div class="hero-inner">
+    <p class="hero-kicker">DAILY WELLBEING TRACKING FOR STUDENTS</p>
 
-    <a href="{{ url_for('registration') }}">Register</a>
-    <a href="{{ url_for('complete') }}">Wellbeing Checkin</a>
+    <h1 class="hero-title">
+      BUILD<br>
+      BETTER<br>
+      DAYS
+    </h1>
 
+    <p class="hero-subtitle">
+      TRACK YOUR WELLBEING THROUGH<br>
+      SIMPLE DAILY CHECK-INS.
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="{{ url_for('login') }}">START TRACKING</a>
+    </div>
+  </div>
+</section>
 {% endblock %}
