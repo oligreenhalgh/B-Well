@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, PasswordField, RadioField, SubmitField, IntegerField, TextAreaField
+from wtforms import StringField, EmailField, PasswordField, RadioField, SubmitField, IntegerField, TextAreaField, DateField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, NumberRange
 
 #Custom validator to check if email is a University of Birmingham email address

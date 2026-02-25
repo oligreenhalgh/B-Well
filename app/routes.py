@@ -3,12 +3,31 @@ from app import app, db
 from app.forms import RegistrationForm, WellbeingForm, LoginForm
 from app.models import Wellbeing, Notification, User
 from flask import session, json, flash, url_for, redirect, render_template, current_app
+from sqlalchemy import inspect
+from sqlalchemy.exc import OperationalError
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    user_id = session.get("user_id")
+    daily_averages = {}
+    if user_id:
+        entries = Wellbeing.query.filter_by(user_id=user_id).all()
+        daily_totals = {}
+        daily_counts = {}
+
+        for entry in entries:
+            date = entry.submitted_on
+            row_avg = (entry.stress + entry.sleep + entry.social + entry.academic + entry.activity) / 5
+
+            daily_totals[date] = daily_totals.get(date, 0) + row_avg
+            daily_counts[date] = daily_counts.get(date, 0) + 1
+
+        for date in daily_totals:
+            daily_averages[date] = round(daily_totals[date] / daily_counts[date], 2)
+
+    return render_template("index.html", daily_scores=daily_averages)
 
 @app.route("/registration", methods=["GET", "POST"])
 def registration():
@@ -40,7 +59,8 @@ def complete():
             social = form.social.data,
             academic = form.academic.data,
             activity = form.activity.data,
-            notes = form.notes.data
+            notes = form.notes.data,
+            date = form.date.data
         )
 
         db.session.add(daily_entry)
@@ -53,12 +73,18 @@ def complete():
 
 @app.before_request
 def check_notifications():
-    notification = Notification.query.filter_by(read=False).first()
+    # Fix for if notifcation table doesn't exist
+    try:
+        inspector = inspect(db.engine)
 
-    if notification:
-        flash(notification.message, "info")
-        notification.read = True
-        db.session.commit()
+        # If table doesn't exist, do nothing
+        if "notification" not in inspector.get_table_names():
+            return
+
+        notification = Notification.query.filter_by(read=False).first()
+
+    except OperationalError:
+        return
 
 
 

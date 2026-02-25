@@ -334,3 +334,53 @@ input[type="submit"]:hover{
     height:28px;
   }
 }
+
+/* HERO STATS PANEL */
+.hero-stats {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.score-table {
+  width: 420px;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+/* Header */
+.score-table thead {
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.score-table th {
+  padding: 14px 18px;
+  text-align: left;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+/* Body */
+.score-table td {
+  padding: 12px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Hover effect */
+.score-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Empty state */
+.score-table td[colspan] {
+  text-align: center;
+  opacity: 0.7;
+  padding: 20px;
+}
