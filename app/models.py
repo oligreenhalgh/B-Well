@@ -9,6 +9,7 @@ class Notification(db.Model):
     created_at: so.Mapped[datetime] = so.mapped_column(
     sa.DateTime, default=lambda: datetime.now(timezone.utc))
     type: so.Mapped[str] = so.mapped_column(sa.String(256))
+    link: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=True)
     read: so.Mapped[bool] = so.mapped_column(sa.Boolean, nullable=False, default=False)
 
 class User(db.Model):

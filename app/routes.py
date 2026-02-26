@@ -2,7 +2,7 @@ import os
 from app import app, db
 from app.forms import RegistrationForm, WellbeingForm, LoginForm
 from app.models import Wellbeing, Notification, User
-from flask import session, json, flash, url_for, redirect, render_template, current_app
+from flask import session, json, flash, url_for, redirect, render_template, current_app, request
 from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError, OperationalError
 from datetime import datetime, timezone
@@ -82,21 +82,17 @@ def complete():
 
 @app.before_request
 def check_notifications():
-    # Fix for if notification table doesn't exist
-    try:
-        inspector = inspect(db.engine)
 
-        # If table doesn't exist, do nothing
-        if "notification" not in inspector.get_table_names():
-            return
-        else:
-            notification = Notification.query.filter_by(read=False).first()
-            flash(notification.message, "info")
-            notification.read = True
-            db.session.commit()
-
-    except OperationalError:
+    # Ignore static file requests
+    if request.endpoint == "static":
         return
+
+    notification = Notification.query.filter_by(read=False).first()
+
+    if notification:
+        flash((notification.message, notification.link), "info")
+        notification.read = True
+        db.session.commit()
 
 
 

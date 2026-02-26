@@ -10,7 +10,8 @@ def create_daily_notification():
     with app.app_context():
         notification = Notification(
             message="Please complete your daily wellbeing check-in.",
-            type="daily"
+            type="daily",
+            link="/wellbeing"
         )
         db.session.add(notification)
         db.session.commit()
