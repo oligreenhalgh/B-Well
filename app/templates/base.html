@@ -15,21 +15,23 @@
 
 <body>
 {% with messages = get_flashed_messages(with_categories=true) %}
-  {% for category, data in messages %}
-    <div class="alert alert-{{ category }}">
-
-      {% if data is iterable and data is not string %}
-        {% if data[1] %}
-          <a href="{{ data[1] }}">{{ data[0] }}</a>
-        {% else %}
-          {{ data[0] }}
-        {% endif %}
-      {% else %}
-        {{ data }}
-      {% endif %}
-
-    </div>
-  {% endfor %}
+  {% if messages %}
+    <ul class="flashes">
+      {% for category, data in messages %}
+        <li class="flash flash-{{ category }}">
+          {% if data is iterable and data is not string %}
+            {% if data[1] %}
+              <a href="{{ data[1] }}">{{ data[0] }}</a>
+            {% else %}
+              {{ data[0] }}
+            {% endif %}
+          {% else %}
+            {{ data }}
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 {% endwith %}
 
 <!-- Conditional login/logout -->
