@@ -1,7 +1,9 @@
-from app import db
+from werkzeug.security import generate_password_hash, check_password_hash
+from app import db, login
 import sqlalchemy.orm as so
 import sqlalchemy as sa
 from datetime import datetime, timezone
+from flask_login import UserMixin
 
 class Notification(db.Model):
     notification_id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -12,15 +14,22 @@ class Notification(db.Model):
     link: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=True)
     read: so.Mapped[bool] = so.mapped_column(sa.Boolean, nullable=False, default=False)
 
-class User(db.Model):
-    user_id: so.Mapped[int] = so.mapped_column(primary_key=True)
+class User(db.Model, UserMixin):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
     email: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
     course: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
     year_of_study: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False, default=0)
-    password: so.Mapped[str] = so.mapped_column(sa.String(256), index=True)
+    password_hash: so.Mapped[str] = so.mapped_column(db.String, unique=True)
 
-    __table_args__ = (db.UniqueConstraint("email"),)
+    def __repr__(self) -> str:
+        return f'<user {self.username}>'
+
+    def set_password(self, password: str):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password: str):
+        return check_password_hash(self.password_hash, password)
 
 class Resource(db.Model):
     resource_id: so.Mapped[int] = so.mapped_column(primary_key=True)
@@ -30,7 +39,7 @@ class Resource(db.Model):
     url: so.Mapped[str] = so.mapped_column(sa.String(256))
 
 class Wellbeing(db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    user_id: so.Mapped[int] = so.mapped_column(primary_key=True)
 
     stress: so.Mapped[int] = so.mapped_column(nullable=False)
     sleep: so.Mapped[int] = so.mapped_column(nullable=False)
@@ -45,3 +54,6 @@ class Wellbeing(db.Model):
     def overall_rating(self):
         return round((self.stress + self.sleep + self.social + self.academic + self.activity) / 5)
 
+@login.user_loader
+def load_user(user_id: int):
+    return db.session.get(User, user_id)

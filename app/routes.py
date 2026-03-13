@@ -6,8 +6,8 @@ from flask import session, json, flash, url_for, redirect, render_template, curr
 from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError, OperationalError
 from datetime import datetime, timezone
-
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import current_user, login_user, logout_user, login_required
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -36,19 +36,24 @@ def index():
 
 @app.route("/registration", methods=["GET", "POST"])
 def registration():
+
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+
     form = RegistrationForm()
     if form.validate_on_submit(): #Check if the form is submitted and valid
         user = User(
-        username = form.username.data,
-        email = form.email.data,
-        course = form.course.data,
-        year_of_study = form.year_of_study.data,
-        password = generate_password_hash(form.password.data)
+            username=form.username.data,
+            email=form.email.data,
+            course=form.course.data,
+            year_of_study=form.year_of_study.data
         )
+        user.set_password(form.password.data)
+
         try:
             db.session.add(user)
             db.session.commit()
-            flash(f"Registration successfully")
+            flash(f"Registration registration successful")
             return redirect(url_for('index'))
         except IntegrityError:
             db.session.rollback()
@@ -57,6 +62,7 @@ def registration():
     return render_template("registration.html", form=form)
 
 @app.route("/wellbeing", methods=['GET','POST'])
+@login_required
 def complete():
     form = WellbeingForm()
     date = datetime.now(timezone.utc).date()
@@ -98,8 +104,8 @@ def check_notifications():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    if "user_id" in session:
-        flash("You are already logged in", "success")
+
+    if current_user.is_authenticated:
         return redirect(url_for("index"))
 
     form = LoginForm()
@@ -114,13 +120,12 @@ def login():
             flash("Invalid email or password.", "danger")
             return render_template("login.html", form=form)
 
-        if not check_password_hash(user.password, password):
+        if not check_password_hash(user.password_hash, password):
             flash("Invalid email or password.", "danger")
             return render_template("login.html", form=form)
 
         # success
-        session["user_id"] = user.user_id
-        session["username"] = user.username
+        login_user(user)
 
         flash(f"Welcome back, {user.username}!", "success")
         return redirect(url_for("complete"))
@@ -130,9 +135,8 @@ def login():
 #Logs users out of the session individually
 @app.route("/logout")
 def logout():
-    session.clear()
-    flash("You have been logged out.", "info")
-    return redirect(url_for("index"))
+    logout_user()
+    return redirect(url_for("login"))
 
 
 
