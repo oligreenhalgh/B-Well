@@ -67,8 +67,9 @@ def complete():
     form = WellbeingForm()
     if form.validate_on_submit():
         daily_entry = WellbeingResponse(
-            date = datetime.now(timezone.utc),
+            notification_id = 1,
             student_id = current_user.id,
+            date = datetime.now(timezone.utc),
             stress = form.stress.data,
             sleep = form.sleep.data,
             social = form.social.data,

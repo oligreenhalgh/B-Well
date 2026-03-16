@@ -16,7 +16,7 @@ class User(db.Model, UserMixin):
     password_hash: so.Mapped[str] = so.mapped_column(db.String, nullable=False)
 
     responses: Mapped[list['WellbeingResponse']] = relationship(back_populates="student", cascade="all, delete-orphan")
-    notifications: Mapped[list['Notification']] = relationship(back_populates="student", cascade="all, delete-orphan")
+    notifications: Mapped[list['Notification']] = relationship(back_populates="student", cascade="all, delete-orphan", uselist=False)
 
     def __repr__(self) -> str:
         return f'<user {self.username}>'
@@ -37,6 +37,8 @@ class Notification(db.Model):
     read: so.Mapped[bool] = so.mapped_column(sa.Boolean, nullable=False, default=False)
     student_id: Mapped[int] = mapped_column(sa.ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True, )
 
+    response: Mapped['WellbeingResponse'] = relationship(back_populates="notification", cascade="all, delete-orphan")
+
     student: Mapped[User] = relationship(back_populates="notifications", foreign_keys=[student_id], )
 
 class Resource(db.Model):
@@ -48,9 +50,10 @@ class Resource(db.Model):
 
 class WellbeingResponse(db.Model):
     __tablename__ = 'wellbeing_response'
-    #(date, student_id) is a composite primary key
-    date: so.Mapped[datetime] = so.mapped_column(sa.DateTime, primary_key=True)
-    student_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("user.id", ondelete="CASCADE"), primary_key=True)
+    wellbeing_response_id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    notification_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("notification.notification_id", ondelete="CASCADE"), unique=True, nullable=False)
+    student_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("user.id", ondelete="CASCADE"), nullable=False)
+    date: so.Mapped[datetime] = so.mapped_column(sa.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
 
     stress: so.Mapped[int] = so.mapped_column(nullable=False)
     sleep: so.Mapped[int] = so.mapped_column(nullable=False)
@@ -60,6 +63,7 @@ class WellbeingResponse(db.Model):
     notes: so.Mapped[str] = so.mapped_column(sa.String(500), nullable=True)
 
     student: Mapped[User] = relationship(back_populates="responses", foreign_keys=[student_id], )
+    notification: Mapped[Notification] = relationship(back_populates="response", foreign_keys=[notification_id], )
 
     def overall_rating(self):
         return round((self.stress + self.sleep + self.social + self.academic + self.activity) / 5)

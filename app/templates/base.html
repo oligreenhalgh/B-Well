@@ -59,12 +59,13 @@
         <!-- Right: links + hamburger -->
         <div class="nav-right">
           <div class="nav-links">
-            <a class="nav-link" href="{{ url_for('registration') }}">Register</a>
 
             {% if current_user.is_authenticated %}
+              <a class="nav-link" href="{{ url_for('index') }}">Home</a>
               <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
             {% else %}
               <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+                <a class="nav-link" href="{{ url_for('registration') }}">Register</a>
             {% endif %}
           </div>
 
