@@ -1,7 +1,7 @@
 import os
 from app import app, db
 from app.forms import RegistrationForm, WellbeingForm, LoginForm
-from app.models import Wellbeing, Notification, User
+from app.models import WellbeingResponse, Notification, User
 from flask import session, json, flash, url_for, redirect, render_template, current_app, request
 from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError, OperationalError
@@ -53,36 +53,33 @@ def registration():
         try:
             db.session.add(user)
             db.session.commit()
-            flash(f"Registration registration successful")
-            return redirect(url_for('index'))
+            flash(f"Registration successful")
+            return redirect(url_for('login'))
         except IntegrityError:
             db.session.rollback()
-            flash(f"User already exists")
-            return redirect(url_for('complete'))
+            flash(f"User(name) already exists")
+            return redirect(url_for('registration'))
     return render_template("registration.html", form=form)
 
 @app.route("/wellbeing", methods=['GET','POST'])
 @login_required
 def complete():
     form = WellbeingForm()
-    date = datetime.now(timezone.utc).date()
     if form.validate_on_submit():
-        daily_entry = Wellbeing(
+        daily_entry = WellbeingResponse(
+            date = datetime.now(timezone.utc),
+            student_id = current_user.id,
             stress = form.stress.data,
             sleep = form.sleep.data,
             social = form.social.data,
             academic = form.academic.data,
             activity = form.activity.data,
-            notes = form.notes.data,
-            date=date
+            notes = form.notes.data
         )
         db.session.add(daily_entry)
         db.session.commit()
         score = daily_entry.overall_rating()
         return render_template("score.html", score=score)
-
-        flash(f"Form submitted, average score: {daily_entry.overall_rating()}")
-        return redirect(url_for('index'))
 
     return render_template("wellbeing_form.html", form=form)
 
@@ -134,6 +131,7 @@ def login():
 
 #Logs users out of the session individually
 @app.route("/logout")
+@login_required
 def logout():
     logout_user()
     return redirect(url_for("login"))
