@@ -1,5 +1,8 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
+
+from sqlalchemy.exc import IntegrityError
+
 from app import db
 from app.models import Notification
 
@@ -13,9 +16,14 @@ def create_daily_notification():
             type="daily",
             link="/wellbeing"
         )
-        db.session.add(notification)
-        db.session.commit()
-        print("Daily notification created.")
+        try:
+            db.session.add(notification)
+            db.session.commit()
+            print("Daily notification created.")
+        except IntegrityError:
+            print("Notification already created today")
+            pass
+
 
 def start_scheduler(app):
     scheduler.start()
