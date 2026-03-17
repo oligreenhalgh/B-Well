@@ -1,11 +1,13 @@
 import os
+from time import strftime
+
 from app import app, db
 from app.forms import RegistrationForm, WellbeingForm, LoginForm
 from app.models import WellbeingResponse, Notification, User
 from flask import session, json, flash, url_for, redirect, render_template, current_app, request
 from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError, OperationalError
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import current_user, login_user, logout_user, login_required
 
@@ -64,6 +66,10 @@ def registration():
 @app.route("/wellbeing", methods=['GET','POST'])
 @login_required
 def complete():
+    for i in current_user.responses:
+        if str(i.date.strftime("%Y-%m-%d")) == str(date.today()):
+            flash("Check in form can only be completed once daily, but here are your past stats!")
+            return redirect(url_for("tracking"))
     form = WellbeingForm()
     if form.validate_on_submit():
         daily_entry = WellbeingResponse(
