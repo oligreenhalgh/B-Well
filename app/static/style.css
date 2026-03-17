@@ -384,3 +384,28 @@ input[type="submit"]:hover{
   opacity: 0.7;
   padding: 20px;
 }
+.graph {
+    position: relative;
+    top: -10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 50%;
+    margin: 0 auto;
+}
+.graph-visualisation {
+    height: 30%;
+    width: 100%;
+    background-color: white;
+
+
+}
+.graph h1
+{
+    margin-top: 5%;
+    text-align: center;
+
+}
+
+.graph-select {
+}

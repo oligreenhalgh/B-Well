@@ -137,5 +137,46 @@ def logout():
     logout_user()
     return redirect(url_for("login"))
 
+@app.route("/tracking", methods=['GET','POST'])
+@login_required
+def tracking():
+    graph = request.args.get("graph_options")
+    print(graph)
+    user = current_user.responses
+    data = []
+    title = None
+    for response in user:
+        date = response.date.strftime("%d-%m-%Y")
+        if graph == "stress":
+            data.append((date, response.stress))
+            title = "Stress Score over Time"
+        elif graph == "sleep":
+            data.append((date, response.sleep))
+            title = "Sleep Score over Time"
+        elif graph == "social":
+            data.append((date, response.social))
+            title = "Social Score over Time"
+        elif graph == "academic":
+            title = "Academic Score over Time"
+            data.append((date, response.academic))
+        elif graph == "activity":
+            title = "Activity Score over Time"
+            data.append((date, response.activity))
+        else:
+            title = "Sleep Score over Time"
+            data.append((date, response.sleep))
+    labels = [row[0] for row in data]
+    values = [row[1] for row in data]
+    avg = 0
+    for val in values:
+        avg += val
+    avg = avg/len(values)
+
+
+    return render_template("tracking.html", labels=labels, values=values, title=title, avg=avg)
+
+
+
+
 
 

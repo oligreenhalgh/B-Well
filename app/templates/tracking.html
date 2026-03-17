@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}B-WELL | Score{% endblock %}
+
+{% block content %}
+<body>
+<section class = "graph-select">
+
+<form method="GET">
+    <select name="graph_options" onchange="this.form.submit()">
+        <option value="stress" selected="selected"> Stress Rating Graph</option>
+        <option value="sleep" selected="selected"> Sleep Rating Graph</option>
+        <option value="social" selected="selected"> Social Rating Graph</option>
+        <option value="academic" selected="selected"> Academic Rating Graph</option>
+        <option value="activity" selected="selected"> Activity Rating Graph</option>
+
+
+    </select>
+
+</form>
+</section>
+
+
+<section class="graph">
+    <div class="graph-visualisation">
+        <canvas id="Graph"></canvas>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+              const ctx = document.getElementById('Graph');
+              new Chart(ctx, {
+                              height:600,
+                              width:400,
+                              backgroundColor: 'rgb(1,1,1)',
+                              type: 'line',
+                              data: {
+                                labels: {{ labels | safe }},
+                                datasets: [{
+                                            label: '# of Votes',
+                                            data: {{ values | safe }},
+                                            borderWidth: 1
+                                          }]
+                                    },
+                              options: {plugins: {title: {display: true, text: '{{ title }}' }},
+                              scales: {
+                                        y: {
+                                            maximumSignificantDigits: 0,
+                                            beginAtZero: true
+                                            },
+                                        x: {
+                                            ticks: {maxRotation: 90, minRotation: 90}}
+                                      },
+                                       responsive: true,
+                                      }
+                              });
+        </script>
+    </div>
+        <h1>Your average {{ title }} is: {{ avg }}</h1>
+    </section>
+
+
+</body>
+{% endblock %}
