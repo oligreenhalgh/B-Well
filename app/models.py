@@ -11,6 +11,7 @@ class User(db.Model, UserMixin):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False, unique=True)
     email: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False, unique=True)
+    is_admin: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=False)
     course: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
     year_of_study: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False)
     password_hash: so.Mapped[str] = so.mapped_column(db.String, nullable=False)
@@ -44,8 +45,8 @@ class Notification(db.Model):
 class Resource(db.Model):
     __tablename__ = 'resource'
     resource_id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    title: so.Mapped[str] = so.mapped_column(sa.String(256))
-    category: so.Mapped[str] = so.mapped_column(sa.String(256))
+    title: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
+    category: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
     url: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
 
 class WellbeingResponse(db.Model):
@@ -71,3 +72,4 @@ class WellbeingResponse(db.Model):
 @login.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
+

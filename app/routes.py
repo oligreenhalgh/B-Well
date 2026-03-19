@@ -1,9 +1,10 @@
 import os
 from time import strftime
+from unicodedata import category
 
 from app import app, db
-from app.forms import RegistrationForm, WellbeingForm, LoginForm
-from app.models import WellbeingResponse, Notification, User
+from app.forms import RegistrationForm, WellbeingForm, LoginForm, ResourceForm
+from app.models import WellbeingResponse, Notification, User, Resource
 from flask import session, json, flash, url_for, redirect, render_template, current_app, request
 from sqlalchemy import inspect
 from sqlalchemy.exc import IntegrityError, OperationalError
@@ -110,7 +111,9 @@ def check_notifications():
 def login():
 
     if current_user.is_authenticated:
-        return redirect(url_for("index"))
+        if current_user.is_admin:
+            return redirect(url_for('add_resources'))
+        return redirect(url_for('index'))
 
     form = LoginForm()
 
@@ -130,6 +133,10 @@ def login():
 
         # success
         login_user(user)
+        if user.is_admin:
+            return redirect(url_for('add_resources'))
+        else:
+            return redirect(url_for('index'))
 
         flash(f"Welcome back, {user.username}!", "success")
         return redirect(url_for("complete"))
@@ -146,7 +153,9 @@ def logout():
 @app.route("/tracking", methods=['GET','POST'])
 @login_required
 def tracking():
-    graph = request.args.get("graph_options")
+    if current_user.is_admin:
+        return redirect(url_for('index'))
+    graph = request.args.get("graph_options", "stress")
     print(graph)
     user = current_user.responses
     data = []
@@ -179,8 +188,63 @@ def tracking():
     avg = avg/len(values)
 
 
-    return render_template("tracking.html", labels=labels, values=values, title=title, avg=avg)
+    return render_template("tracking.html", labels=labels, values=values, title=title, avg=avg, graph_option=graph )
 
+@app.route("/admin/resources", methods=['GET', 'POST'])
+@login_required
+def add_resources():
+    if not current_user.is_admin:
+        return redirect(url_for('index'))
+
+    resources = Resource.query.order_by(Resource.title).all()
+
+    form = ResourceForm()
+
+    if form.validate_on_submit():
+        resource = Resource(
+            title = form.title.data,
+            category = form.category.data,
+            url = form.url.data
+        )
+        db.session.add(resource)
+        db.session.commit()
+        flash('You have added a resource')
+        return redirect(url_for('add_resources'))
+    return render_template('resources.html', form=form, resources=resources)
+
+
+@app.route('/admin/resources/update/<int:resource_id>', methods=['GET', 'POST'])
+@login_required
+def update_resource(resource_id):
+    if not current_user.is_admin:
+        return redirect(url_for('index'))
+    resource = Resource.query.get_or_404(resource_id)
+    resources = Resource.query.order_by(Resource.title).all()
+    form = ResourceForm(obj=resource)
+
+    if form.validate_on_submit():
+        resource.title = form.title.data
+        resource.category = form.category.data
+        resource.url = form.url.data
+        db.session.commit()
+        flash(f'You have successfully changed the resource')
+        return redirect(url_for('add_resources'))
+
+    return render_template('resources.html', form=form, resources=resources)
+
+@app.route('/admin/resources/deleting/<int:resource_id>', methods=['GET', 'POST'])
+@login_required
+def delete_resource(resource_id):
+    if not current_user.is_admin:
+        return redirect(url_for('index'))
+
+    resource = Resource.query.get_or_404(resource_id)
+    db.session.delete(resource)
+    db.session.commit()
+    flash('You have successfully deleted the resource')
+    return redirect(url_for('add_resources'))
+
+from app.models import User
 
 
 
