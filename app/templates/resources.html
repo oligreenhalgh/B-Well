@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="resources-page">
+    <h1 class="page-title">Resources</h1>
+
+    <div class="resources-list">
+        {% for resource in resources %}
+
+        <div class="resource-item">
+
+            <div class="resource-info">
+                <h3>{{ resource.title }}</h3>
+                <p>{{ resource.category }}</p>
+
+                <a href="{{ resource.url }}" target="_blank" class="resource-link">
+                    {{ resource.url }}
+                </a>
+            </div>
+
+            <div class="resource-actions">
+                <a href="{{ url_for('update_resource', resource_id=resource.resource_id) }}" class="edit-btn">
+                    Edit
+                </a>
+
+                <form method="post" action="{{ url_for('delete_resource', resource_id=resource.resource_id) }}">
+                    {{ form.hidden_tag() }}
+                    <button type="submit" class="delete-btn">Delete</button>
+                </form>
+            </div>
+
+        </div>
+
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <h2 class="form-title">Add Resource</h2>
+
+    <div class="form-container">
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.title.label }}
+                {{ form.title(size=32) }}
+            </div>
+
+            <div class="form-group">
+                {{ form.category.label }}
+                {{ form.category(size=32) }}
+            </div>
+
+            <div class="form-group">
+                {{ form.url.label }}
+                {{ form.url(size=32) }}
+            </div>
+
+            <div class="form-submit">
+                {{ form.submit() }}
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

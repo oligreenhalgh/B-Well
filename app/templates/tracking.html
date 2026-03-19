@@ -2,63 +2,102 @@
 {% block title %}B-WELL | Score{% endblock %}
 
 {% block content %}
-<body>
-<section class = "graph-select">
 
-<form method="GET">
-    <select name="graph_options" onchange="this.form.submit()">
-        <option value="stress" selected="selected"> Stress Rating Graph</option>
-        <option value="sleep" selected="selected"> Sleep Rating Graph</option>
-        <option value="social" selected="selected"> Social Rating Graph</option>
-        <option value="academic" selected="selected"> Academic Rating Graph</option>
-        <option value="activity" selected="selected"> Activity Rating Graph</option>
+<section class="graph-page">
 
+  <section class="graph-select">
+    <form method="GET" class="graph-form">
+      <select name="graph_options" class="graph-dropdown" onchange="this.form.submit()">
 
-    </select>
+        <option value="stress" {% if graph_option == "stress" %}selected{% endif %}>
+          Stress Rating Graph
+        </option>
 
-</form>
+        <option value="sleep" {% if graph_option == "sleep" %}selected{% endif %}>
+          Sleep Rating Graph
+        </option>
+
+        <option value="social" {% if graph_option == "social" %}selected{% endif %}>
+          Social Rating Graph
+        </option>
+
+        <option value="academic" {% if graph_option == "academic" %}selected{% endif %}>
+          Academic Rating Graph
+        </option>
+
+        <option value="activity" {% if graph_option == "activity" %}selected{% endif %}>
+          Activity Rating Graph
+        </option>
+
+      </select>
+    </form>
+  </section>
+
+  <section class="graph">
+
+    <div class="graph-visualisation">
+      <canvas id="Graph"></canvas>
+    </div>
+
+    <p class="graph-summary">
+      Your average {{ title }} is
+      <span>{{ avg }}</span>
+    </p>
+
+  </section>
+
 </section>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<section class="graph">
-    <div class="graph-visualisation">
-        <canvas id="Graph"></canvas>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-              const ctx = document.getElementById('Graph');
-              new Chart(ctx, {
-                              height:600,
-                              width:400,
-                              backgroundColor: 'rgb(1,1,1)',
-                              type: 'line',
-                              data: {
-                                labels: {{ labels | safe }},
-                                datasets: [{
-                                            label: '# of Votes',
-                                            data: {{ values | safe }},
-                                            borderWidth: 1
-                                          }]
-                                    },
-                              options: {plugins: {title: {display: true, text: '{{ title }}' }},
-                              scales: {
-                                        y: {
-                                            maximumSignificantDigits: 0,
-                                            beginAtZero: true,
-                                            suggestedMax: 5
-                                            },
-                                        x: {
-                                            ticks: {maxRotation: 90, minRotation: 90}},
+<script>
+  const ctx = document.getElementById('Graph');
 
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: {{ labels | safe }},
+      datasets: [{
+        label: '{{ title }}',
+        data: {{ values | safe }},
+        borderWidth: 2,
+        borderColor: '#54d2b5',
+        backgroundColor: 'rgba(84,210,181,0.2)',
+        tension: 0.3
+      }]
+    },
+    options: {
+      plugins: {
+        title: {
+          display: true,
+          text: '{{ title }}',
+          color: 'white'
+        },
+        legend: {
+          labels: {
+            color: 'white'
+          }
+        }
+      },
+      scales: {
+        y: {
+          ticks: { color: 'white' },
+          grid: { color: 'rgba(255,255,255,0.1)' },
+          beginAtZero: true,
+          suggestedMax: 5
+        },
+        x: {
+          ticks: {
+            color: 'white',
+            maxRotation: 90,
+            minRotation: 90
+          },
+          grid: { color: 'rgba(255,255,255,0.05)' }
+        }
+      },
+      responsive: true
+    }
+  });
+</script>
 
-                                      },
-                                       responsive: true,
-                                      }
-                              });
-        </script>
-    </div>
-        <h1>Your average {{ title }} is: {{ avg }}</h1>
-    </section>
-
-
-</body>
 {% endblock %}

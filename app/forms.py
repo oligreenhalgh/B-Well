@@ -46,3 +46,9 @@ class LoginForm(FlaskForm):
     password = PasswordField("Password", validators=[DataRequired(message="Password required"), Length(min=8), contains_number])
     submit = SubmitField("login")
 
+
+class ResourceForm(FlaskForm):
+    title = StringField("Resource Title", validators=[DataRequired(message="Title Required")])
+    category = StringField("Category", validators=[DataRequired(message='Category Required')])
+    url = StringField("Website link", validators=[DataRequired(message="Website link Required")])
+    submit = SubmitField("Submit")
