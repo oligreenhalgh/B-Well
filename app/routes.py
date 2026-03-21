@@ -14,27 +14,6 @@ from flask_login import current_user, login_user, logout_user, login_required
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    '''
-    user_id = session.get("user_id")
-    daily_averages = {}
-    if user_id:
-        entries = Wellbeing.query.filter_by(user_id=user_id).all()
-        daily_totals = {}
-        daily_counts = {}
-
-        for entry in entries:
-            date = entry.submitted_on
-            row_avg = (entry.stress + entry.sleep + entry.social + entry.academic + entry.activity) / 5
-
-            daily_totals[date] = daily_totals.get(date, 0) + row_avg
-            daily_counts[date] = daily_counts.get(date, 0) + 1
-
-        for date in daily_totals:
-            daily_averages[date] = round(daily_totals[date] / daily_counts[date], 2)
-
-    return render_template("index.html", daily_scores=daily_averages)
-    '''
-
     return render_template("index.html")
 
 @app.route("/registration", methods=["GET", "POST"])
@@ -64,28 +43,56 @@ def registration():
             return redirect(url_for('registration'))
     return render_template("registration.html", form=form)
 
-@app.route("/wellbeing", methods=['GET','POST'])
+@app.route("/wellbeing", methods=['GET', 'POST'])
 @login_required
 def complete():
-    for i in current_user.responses:
-        if str(i.date.strftime("%Y-%m-%d")) == str(date.today()):
-            flash("Check in form can only be completed once daily, but here are your past stats!")
-            return redirect(url_for("tracking"))
+    from datetime import datetime, timezone
+    import sqlalchemy as sa
+
+    # Get today's date
+    today = datetime.now(timezone.utc).date()
+
+    # Get todays notification for this user
+    notification = Notification.query.filter(
+        Notification.student_id == current_user.id,
+        Notification.type == "daily",
+        sa.func.date(Notification.created_at) == today
+    ).first()
+
+    if not notification:
+        return redirect(url_for("index"))
+
+    # Prevent duplicate submission (based on notification)
+    existing = WellbeingResponse.query.filter_by(
+        notification_id=notification.notification_id
+    ).first()
+
+    if existing:
+        flash("Check in already completed today. Here are your stats!")
+        return redirect(url_for("tracking"))
+
     form = WellbeingForm()
+
     if form.validate_on_submit():
         daily_entry = WellbeingResponse(
-            notification_id = 1,
-            student_id = current_user.id,
-            date = datetime.now(timezone.utc),
-            stress = form.stress.data,
-            sleep = form.sleep.data,
-            social = form.social.data,
-            academic = form.academic.data,
-            activity = form.activity.data,
-            notes = form.notes.data
+            notification_id=notification.notification_id,
+            student_id=current_user.id,
+            date=datetime.now(timezone.utc),
+            stress=form.stress.data,
+            sleep=form.sleep.data,
+            social=form.social.data,
+            academic=form.academic.data,
+            activity=form.activity.data,
+            notes=form.notes.data
         )
+
         db.session.add(daily_entry)
+
+        # Mark notification as read (optional but nice)
+        notification.read = True
+
         db.session.commit()
+
         score = daily_entry.overall_rating()
         return render_template("score.html", score=score)
 
@@ -94,11 +101,16 @@ def complete():
 @app.before_request
 def check_notifications():
 
-    # Ignore static file requests
     if request.endpoint == "static":
         return
 
-    notification = Notification.query.filter_by(read=False).first()
+    if not current_user.is_authenticated:
+        return
+
+    notification = Notification.query.filter_by(
+        student_id=current_user.id,
+        read=False
+    ).first()
 
     if notification:
         flash((notification.message, notification.link), "info")

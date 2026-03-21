@@ -17,7 +17,7 @@ class User(db.Model, UserMixin):
     password_hash: so.Mapped[str] = so.mapped_column(db.String, nullable=False)
 
     responses: Mapped[list['WellbeingResponse']] = relationship(back_populates="student", cascade="all, delete-orphan")
-    notifications: Mapped[list['Notification']] = relationship(back_populates="student", cascade="all, delete-orphan", uselist=False)
+    notifications: Mapped[list['Notification']] = relationship(back_populates="student", cascade="all, delete-orphan")
 
     def __repr__(self) -> str:
         return f'<user {self.username}>'
@@ -37,7 +37,6 @@ class Notification(db.Model):
     link: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=True)
     read: so.Mapped[bool] = so.mapped_column(sa.Boolean, nullable=False, default=False)
     student_id: Mapped[int] = mapped_column(sa.ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True, )
-
     response: Mapped['WellbeingResponse'] = relationship(back_populates="notification", cascade="all, delete-orphan")
 
     student: Mapped[User] = relationship(back_populates="notifications", foreign_keys=[student_id], )
