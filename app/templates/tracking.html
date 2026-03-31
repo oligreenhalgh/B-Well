@@ -100,4 +100,26 @@
   });
 </script>
 
+<section class="recommendations">
+  {% if resources %}
+    <h2 class="recommend-title">Recommended For You</h2>
+    <p class="recommend-sub">
+      Based on your recent scores in: {{ low_categories }}
+    </p>
+
+    <div class="recommend-grid">
+      {% for r in resources %}
+        <div class="recommend-card">
+          <h3>{{ r.title }}</h3>
+          <p class="recommend-category">{{ r.category }}</p>
+
+          <a href="{{ r.url }}" target="_blank" class="recommend-link">
+            View Resource
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+</section>
+
 {% endblock %}

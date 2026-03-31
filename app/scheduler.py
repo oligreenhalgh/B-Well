@@ -30,6 +30,7 @@ def create_daily_notification():
                     student_id=user.id
                 )
                 db.session.add(notification)
+                db.session.commit()
                 created_count += 1
 
         if created_count > 0:

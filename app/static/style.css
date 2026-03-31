@@ -688,3 +688,68 @@ input[type="submit"]:hover{
   padding: 0;
   background: none;
 }
+
+.recommendations {
+  max-width: 900px;
+  margin: 60px auto 40px;
+  padding: 0 20px;
+}
+
+.recommend-title {
+  text-align: center;
+  margin-bottom: 8px;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.recommend-sub {
+  text-align: center;
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 25px;
+}
+
+.recommend-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.recommend-card {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+
+  border-radius: 16px;
+  padding: 20px;
+
+  border: 1px solid rgba(255,255,255,0.1);
+
+  transition: 0.2s ease;
+}
+
+.recommend-card:hover {
+  transform: translateY(-4px);
+  background: rgba(0,0,0,0.5);
+}
+
+.recommend-category {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 10px;
+}
+
+.recommend-link {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+  font-weight: 600;
+  color: #54d2b5;
+  font-size: 13px;
+}
+
+.recommend-link:hover {
+  color: #3cc7a8;
+  text-decoration: underline;
+}

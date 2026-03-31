@@ -49,7 +49,13 @@
 
             <div class="form-group">
                 {{ form.category.label }}
-                {{ form.category(size=32) }}
+                <select name="category" class="form-control">
+                    <option value="stress">Stress</option>
+                    <option value="sleep">Sleep</option>
+                    <option value="social">Social</option>
+                    <option value="academic">Academic</option>
+                    <option value="activity">Activity</option>
+                </select>
             </div>
 
             <div class="form-group">

