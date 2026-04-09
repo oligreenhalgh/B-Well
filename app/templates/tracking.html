@@ -7,18 +7,23 @@
 
   <section class="graph-select">
     <form method="GET" class="graph-form">
+
       <select name="graph_options" class="graph-dropdown" onchange="this.form.submit()">
 
+        <option value="average" {% if graph_option == "average" %}selected{% endif %}>
+          Total Average Across All Categories
+        </option>
+
         <option value="stress" {% if graph_option == "stress" %}selected{% endif %}>
-          Stress Rating Graph
+          Average Stress Rating
         </option>
 
         <option value="sleep" {% if graph_option == "sleep" %}selected{% endif %}>
-          Sleep Rating Graph
+          Average Sleep Rating
         </option>
 
         <option value="social" {% if graph_option == "social" %}selected{% endif %}>
-          Social Rating Graph
+          Average Social Rating
         </option>
 
         <option value="academic" {% if graph_option == "academic" %}selected{% endif %}>

@@ -177,7 +177,11 @@ def tracking():
     for response in user_responses:
         date = response.date.strftime("%d-%m-%Y")
 
-        if graph == "stress":
+        if graph =="average":
+            avg = (response.sleep + response.sleep + response.academic + response.stress + response.social)/5
+            data.append((date, avg))
+            title = "Average Scores over Time"
+        elif graph == "stress":
             data.append((date, response.stress))
             title = "Stress Score over Time"
         elif graph == "sleep":
