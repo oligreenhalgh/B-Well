@@ -2,6 +2,26 @@
 
 A daily wellbeing tracking web app for University of Birmingham students. Students log short daily check-ins across five dimensions (stress, sleep, social, academic, activity) and view their trends over time.
 
+<p align="center">
+  <img src="app/static/image/BwellLogolong.svg" alt="B-Well logo" width="400">
+</p>
+
+<p align="center">
+  <em>Daily wellbeing tracking for University of Birmingham students.</em>
+</p>
+
+---
+
+## Preview
+
+<p align="center">
+  <img src="app/static/image/B%20WELL%20HOME%20PAGE.png" alt="B-Well home page" width="700">
+</p>
+
+## Features
+...
+
+
 ## Features
 
 - University-email-gated registration (`@student.bham.ac.uk` / `@bham.ac.uk`)
