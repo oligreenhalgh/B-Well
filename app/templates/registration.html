@@ -42,14 +42,6 @@
           {% endfor %}
         </div>
         <div class="form-row">
-            {{ form.course.label }}
-            {{ form.course }}
-        </div>
-        <div class="form-row">
-            {{ form.year_of_study.label }}
-            {{ form.year_of_study }}
-        </div>
-        <div class="form-row">
           {{ form.consent.label }}
           <div class="radio-group">
             {{ form.consent() }}
@@ -62,17 +54,6 @@
         <div class="form-actions">
           {{ form.submit(class_="btn btn-primary") }}
         </div>
-
-        {# Optional: keep a full list of errors too (useful for debugging) #}
-        {% if form.errors %}
-          <ul class="form-hint">
-            {% for field, errors in form.errors.items() %}
-              {% for err in errors %}
-                <li>{{ err }}</li>
-              {% endfor %}
-            {% endfor %}
-          </ul>
-        {% endif %}
 
       </form>
 

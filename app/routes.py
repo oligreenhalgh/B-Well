@@ -27,12 +27,12 @@ def registration():
         user = User(
             username=form.username.data,
             email=form.email.data,
-            course=form.course.data,
-            year_of_study=form.year_of_study.data
         )
         user.set_password(form.password.data)
-        if form.username.data.lower() == "admin":
+
+        if form.email.data[-11:] == "@bham.ac.uk":
             user.is_admin = True
+
         try:
             db.session.add(user)
             db.session.commit()

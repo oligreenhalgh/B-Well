@@ -12,8 +12,6 @@ class User(db.Model, UserMixin):
     username: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False, unique=True)
     email: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False, unique=True)
     is_admin: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=False)
-    course: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=False)
-    year_of_study: so.Mapped[int] = so.mapped_column(sa.INTEGER, nullable=False)
     password_hash: so.Mapped[str] = so.mapped_column(db.String, nullable=False)
 
     responses: Mapped[list['WellbeingResponse']] = relationship(back_populates="student", cascade="all, delete-orphan")
