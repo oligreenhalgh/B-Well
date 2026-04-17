@@ -40,8 +40,8 @@ class WellbeingForm(FlaskForm):
 
 #Login form
 class LoginForm(FlaskForm):
-    email = EmailField("Email", validators=[DataRequired(message="Email required"), is_uni_email])
-    password = PasswordField("Password", validators=[DataRequired(message="Password required"), Length(min=8), contains_number])
+    email = EmailField("Email", validators=[DataRequired(message="Email required")])
+    password = PasswordField("Password", validators=[DataRequired(message="Password required")])
     submit = SubmitField("login")
 
 
