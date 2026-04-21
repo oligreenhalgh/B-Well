@@ -10,7 +10,7 @@ def create_daily_notification():
     import sqlalchemy as sa
 
     with app.app_context():
-        users = User.query.all()
+        users = User.query.filter_by(is_admin=False).all()
         today = datetime.now(timezone.utc).date()
         created_count = 0
 
