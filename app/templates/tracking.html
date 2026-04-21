@@ -109,7 +109,10 @@
   {% if resources %}
     <h2 class="recommend-title">Recommended For You</h2>
     <p class="recommend-sub">
-      Based on your recent scores in: {{ low_categories }}
+      Based on your recent scores in:
+        <span>
+          {{ low_categories | join(', ') }}
+      </span>.
     </p>
 
     <div class="recommend-grid">

@@ -59,14 +59,15 @@ def complete():
     ).first()
 
     if not notification:
-        return redirect(url_for("index"))
+        flash("Daily check-in not yet available. Please check back later!", "attention")
+        return redirect(url_for("tracking"))
 
     existing = WellbeingResponse.query.filter_by(
         notification_id=notification.notification_id
     ).first()
 
     if existing:
-        flash("Check in already completed today. Here are your stats!")
+        flash("Check in already completed today. Here are your stats!", "attention")
         return redirect(url_for("tracking"))
 
     form = WellbeingForm()

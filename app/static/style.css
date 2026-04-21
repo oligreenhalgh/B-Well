@@ -304,6 +304,19 @@ input[type="submit"]:hover{
   color:white;
 }
 
+/* specific flash message styling for accessing wellbeing form form nav */
+.flash-attention {
+  background: #54d2b5;
+  color: #042b2d;
+  width: 100%;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 2px solid rgba(0,0,0,0.1);
+}
 
 /* ================================
    RESPONSIVE
