@@ -1,72 +1,69 @@
 {% extends "base.html" %}
-
 {% block title %}Wellbeing Form{% endblock %}
 
 {% block content %}
-<h2>Wellbeing Form</h2>
 
-<form method="POST">
-    {{ form.hidden_tag() }}
+<section class="wellbeing-page">
+  <div class="wellbeing-card">
 
-    {{ form.stress.label }}<br>
-    {{ form.stress(type="range", min=1, max=5, value=3, id="stress-slider") }}<br>
-    <span id="stress-output">3</span><br><br>
+    <h2 class="wellbeing-title">Daily Check-in</h2>
+    <p class="wellbeing-subtitle">Rate each area from 1 to 5.</p>
 
-    {{ form.sleep.label }}<br>
-    {{ form.sleep(type="range", min=1, max=5, value=3, id="sleep-slider") }}<br>
-    <span id="sleep-output">3</span><br><br>
+    <form method="POST" class="wellbeing-form">
+      {{ form.hidden_tag() }}
 
-    {{ form.social.label }}<br>
-    {{ form.social(type="range", min=1, max=5, value=3, id="social-slider") }}<br>
-    <span id="social-output">3</span><br><br>
+      <div class="slider-row">
+        {{ form.stress.label }}
+        {{ form.stress(type="range", min=1, max=5, value=3, id="stress-slider") }}
+        <span class="slider-value" id="stress-output">3</span>
+      </div>
 
-    {{ form.academic.label }}<br>
-    {{ form.academic(type="range", min=1, max=5, value=3, id="academic-slider") }}<br>
-    <span id="academic-output">3</span><br><br>
+      <div class="slider-row">
+        {{ form.sleep.label }}
+        {{ form.sleep(type="range", min=1, max=5, value=3, id="sleep-slider") }}
+        <span class="slider-value" id="sleep-output">3</span>
+      </div>
 
-    {{ form.activity.label }}<br>
-    {{ form.activity(type="range", min=1, max=5, value=3, id="activity-slider") }}<br>
-    <span id="activity-output">3</span><br><br>
+      <div class="slider-row">
+        {{ form.social.label }}
+        {{ form.social(type="range", min=1, max=5, value=3, id="social-slider") }}
+        <span class="slider-value" id="social-output">3</span>
+      </div>
 
-    {{ form.notes.label }}<br>
-    {{ form.notes }}<br><br>
+      <div class="slider-row">
+        {{ form.academic.label }}
+        {{ form.academic(type="range", min=1, max=5, value=3, id="academic-slider") }}
+        <span class="slider-value" id="academic-output">3</span>
+      </div>
 
-    {{form.submit() }}
+      <div class="slider-row">
+        {{ form.activity.label }}
+        {{ form.activity(type="range", min=1, max=5, value=3, id="activity-slider") }}
+        <span class="slider-value" id="activity-output">3</span>
+      </div>
 
-</form>
+      <div class="slider-row">
+        {{ form.notes.label }}
+        {{ form.notes(class_="wellbeing-notes") }}
+      </div>
 
+      {{ form.submit(class_="btn btn-primary") }}
+    </form>
 
+  </div>
+</section>
 
 <script>
-    const stressSlider = document.getElementById("stress-slider");
-    const stressOutput = document.getElementById("stress-output");
-    stressSlider.oninput = function() {
-        stressOutput.innerText = this.value;
-    }
+  const sliders = ["stress", "sleep", "social", "academic", "activity"];
 
-    const sleepSlider = document.getElementById("sleep-slider");
-    const sleepOutput = document.getElementById("sleep-output");
-    sleepSlider.oninput = function() {
-        sleepOutput.innerText = this.value;
-    }
+  sliders.forEach(function(name) {
+    const slider = document.getElementById(name + "-slider");
+    const output = document.getElementById(name + "-output");
 
-    const socialSlider = document.getElementById("social-slider");
-    const socialOutput = document.getElementById("social-output");
-    socialSlider.oninput = function() {
-        socialOutput.innerText = this.value;
-    }
-
-    const academicSlider = document.getElementById("academic-slider");
-    const academicOutput = document.getElementById("academic-output");
-    academicSlider.oninput = function() {
-        academicOutput.innerText = this.value;
-    }
-
-    const activitySlider = document.getElementById("activity-slider");
-    const activityOutput = document.getElementById("activity-output");
-    activitySlider.oninput = function() {
-        activityOutput.innerText = this.value;
-    }
+    slider.oninput = function() {
+      output.innerText = this.value;
+    };
+  });
 </script>
 
 {% endblock %}

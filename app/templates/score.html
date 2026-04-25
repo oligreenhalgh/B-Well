@@ -14,30 +14,35 @@
 
 <section class="recommendations">
   {% if resources %}
-    <h2 class="recommend-title">Recommended For You</h2>
-    <p class="recommend-sub">
-      Based on your recent score in:
-        <span>
-            <ul>
-                {% for cat in low_categories %}
-                <li> {{cat}}
-                {% endfor %}
-            </ul>
-      </span>.
-    </p>
+
+    <div class="recommend-header">
+      <p class="recommend-kicker">Personalised support</p>
+      <h2 class="recommend-title">Recommended For You</h2>
+
+      <p class="recommend-sub">
+        Based on your recent score, these areas may need attention:
+      </p>
+
+      <div class="recommend-tags">
+        {% for cat in low_categories %}
+          <span>{{ cat }}</span>
+        {% endfor %}
+      </div>
+    </div>
 
     <div class="recommend-grid">
       {% for r in resources %}
-        <div class="recommend-card">
-          <h3>{{ r.title }}</h3>
+        <article class="recommend-card">
           <p class="recommend-category">{{ r.category }}</p>
+          <h3>{{ r.title }}</h3>
 
           <a href="{{ r.url }}" target="_blank" class="recommend-link">
             View Resource
           </a>
-        </div>
+        </article>
       {% endfor %}
     </div>
+
   {% endif %}
 </section>
 
