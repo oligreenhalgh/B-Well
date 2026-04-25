@@ -29,12 +29,13 @@ class User(db.Model, UserMixin):
 class Notification(db.Model):
     __tablename__ = 'notification'
     notification_id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    message: so.Mapped[str] = so.mapped_column(sa.String(256),nullable=False)
+    message: so.Mapped[str] = so.mapped_column(sa.String(256),nullable=True)
     created_at: so.Mapped[datetime] = so.mapped_column(sa.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
-    type: so.Mapped[str] = so.mapped_column(sa.String(256))
+    type: so.Mapped[str] = so.mapped_column(sa.String(256), nullable = True)
     link: so.Mapped[str] = so.mapped_column(sa.String(256), nullable=True)
     read: so.Mapped[bool] = so.mapped_column(sa.Boolean, nullable=False, default=False)
     student_id: Mapped[int] = mapped_column(sa.ForeignKey("user.id", ondelete="CASCADE"), nullable=False, index=True, )
+
     response: Mapped['WellbeingResponse'] = relationship(back_populates="notification", cascade="all, delete-orphan")
 
     student: Mapped[User] = relationship(back_populates="notifications", foreign_keys=[student_id], )

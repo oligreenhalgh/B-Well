@@ -4,6 +4,10 @@
 {% block content %}
 
 <section class="graph-page">
+    <br>
+    <br>
+    <br>
+    <br>
 
   <section class="graph-select">
     <form method="GET" class="graph-form">
@@ -11,27 +15,27 @@
       <select name="graph_options" class="graph-dropdown" onchange="this.form.submit()">
 
         <option value="average" {% if graph_option == "average" %}selected{% endif %}>
-          Total Average Across All Categories
+          Average Across All Categories
         </option>
 
         <option value="stress" {% if graph_option == "stress" %}selected{% endif %}>
-          Average Stress Rating
+          Stress Scores
         </option>
 
         <option value="sleep" {% if graph_option == "sleep" %}selected{% endif %}>
-          Average Sleep Rating
+          Sleep Scores
         </option>
 
         <option value="social" {% if graph_option == "social" %}selected{% endif %}>
-          Average Social Rating
+          Social Scores
         </option>
 
         <option value="academic" {% if graph_option == "academic" %}selected{% endif %}>
-          Academic Rating Graph
+          Academic Scores
         </option>
 
         <option value="activity" {% if graph_option == "activity" %}selected{% endif %}>
-          Activity Rating Graph
+          Activity Scores
         </option>
 
       </select>
@@ -45,7 +49,7 @@
     </div>
 
     <p class="graph-summary">
-      Your average {{ title }} is
+      Your average {{ title_lower }} is
       <span>{{ avg }}</span>
     </p>
 
@@ -77,11 +81,6 @@
           display: true,
           text: '{{ title }}',
           color: 'white'
-        },
-        legend: {
-          labels: {
-            color: 'white'
-          }
         }
       },
       scales: {
@@ -104,30 +103,5 @@
     }
   });
 </script>
-
-<section class="recommendations">
-  {% if resources %}
-    <h2 class="recommend-title">Recommended For You</h2>
-    <p class="recommend-sub">
-      Based on your recent scores in:
-        <span>
-          {{ low_categories | join(', ') }}
-      </span>.
-    </p>
-
-    <div class="recommend-grid">
-      {% for r in resources %}
-        <div class="recommend-card">
-          <h3>{{ r.title }}</h3>
-          <p class="recommend-category">{{ r.category }}</p>
-
-          <a href="{{ r.url }}" target="_blank" class="recommend-link">
-            View Resource
-          </a>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-</section>
 
 {% endblock %}

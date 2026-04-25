@@ -1,18 +1,14 @@
-import os
-from time import strftime
-from unicodedata import category
+import random
 
 from app import app, db
 from app.forms import RegistrationForm, WellbeingForm, LoginForm, ResourceForm
 from app.models import WellbeingResponse, Notification, User, Resource
-from flask import session, json, flash, url_for, redirect, render_template, current_app, request
-from sqlalchemy import inspect
-from sqlalchemy.exc import IntegrityError, OperationalError
-from datetime import datetime, timezone, date
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask import flash, url_for, redirect, render_template, request
+from sqlalchemy.exc import IntegrityError
+from werkzeug.security import check_password_hash
 from flask_login import current_user, login_user, logout_user, login_required
 
-@app.route("/", methods=["GET", "POST"])
+@app.route("/home", methods=["GET", "POST"])
 def index():
     return render_template("index.html")
 
@@ -59,7 +55,7 @@ def complete():
     ).first()
 
     if not notification:
-        flash("Daily check-in not yet available. Please check back later!", "attention")
+        flash(" Daily check-in not yet available. Please check back later! ", "success")
         return redirect(url_for("tracking"))
 
     existing = WellbeingResponse.query.filter_by(
@@ -67,33 +63,63 @@ def complete():
     ).first()
 
     if existing:
-        flash("Check in already completed today. Here are your stats!", "attention")
+        flash(" Check in already completed today. Here are your stats! ", "success")
         return redirect(url_for("tracking"))
 
     form = WellbeingForm()
 
     if form.validate_on_submit():
+
+        stress = form.stress.data
+        sleep = form.sleep.data
+        social = form.social.data
+        academic = form.academic.data
+        activity = form.activity.data
+
         daily_entry = WellbeingResponse(
             notification_id=notification.notification_id,
             student_id=current_user.id,
             date=datetime.now(timezone.utc),
-            stress=form.stress.data,
-            sleep=form.sleep.data,
-            social=form.social.data,
-            academic=form.academic.data,
-            activity=form.activity.data,
+            stress=stress,
+            sleep=sleep,
+            social=social,
+            academic=academic,
+            activity=activity,
             notes=form.notes.data
         )
 
         db.session.add(daily_entry)
-
-        # Mark notification as read (optional but nice)
-        notification.read = True
-
         db.session.commit()
 
+        notification.read = True
+
         score = daily_entry.overall_rating()
-        return render_template("score.html", score=score)
+
+        LOW_THRESHOLD = 3
+
+        low_cats = []
+        if stress < LOW_THRESHOLD:
+            low_cats.append("stress")
+        if sleep < LOW_THRESHOLD:
+            low_cats.append("sleep")
+        if social < LOW_THRESHOLD:
+            low_cats.append("social")
+        if academic < LOW_THRESHOLD:
+            low_cats.append("academic")
+        if activity < LOW_THRESHOLD:
+            low_cats.append("activity")
+
+        random_resources_lst = []
+        for cat in low_cats:
+            all_cat_resources = Resource.query.filter(Resource.category == cat).all()
+            if all_cat_resources:
+                random_resource = random.choice(all_cat_resources)
+                random_resources_lst.append(random_resource)
+
+        if len(random_resources_lst) == 0:
+            random_resources_lst = None
+
+        return render_template("score.html", score=score, resources = random_resources_lst, low_categories=low_cats)
 
     return render_template("wellbeing_form.html", form=form)
 
@@ -118,7 +144,7 @@ def check_notifications():
 
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def login():
 
     if current_user.is_authenticated:
@@ -134,23 +160,16 @@ def login():
 
         user = User.query.filter_by(email=email).first()
 
-        if not user:
+        if not user or not check_password_hash(user.password_hash, password):
             flash("Invalid email or password.", "danger")
-            return render_template("login.html", form=form)
+            return redirect(url_for("login", form=form))
 
-        if not check_password_hash(user.password_hash, password):
-            flash("Invalid email or password.", "danger")
-            return render_template("login.html", form=form)
-
-        # success
         login_user(user)
+        flash(f"Welcome back {user.username}!", "success")
         if user.is_admin:
             return redirect(url_for('add_resources'))
         else:
             return redirect(url_for('index'))
-
-        flash(f"Welcome back, {user.username}!", "success")
-        return redirect(url_for("complete"))
 
     return render_template("login.html", form=form)
 
@@ -166,7 +185,7 @@ def logout():
 def tracking():
 
     if current_user.is_admin:
-        return redirect(url_for('index'))
+        return redirect(url_for('/admin/resources'))
 
     graph = request.args.get("graph_options", "stress")
 
@@ -179,70 +198,31 @@ def tracking():
         date = response.date.strftime("%d-%m-%Y")
 
         if graph =="average":
-            avg = (response.sleep + response.sleep + response.academic + response.stress + response.social)/5
+            avg = round((response.sleep + response.sleep + response.academic + response.stress + response.social)/5, 2)
             data.append((date, avg))
-            title = "Average Scores over Time"
+            title = "Average Score Over Time"
         elif graph == "stress":
             data.append((date, response.stress))
-            title = "Stress Score over Time"
+            title = "Stress Score Over Time"
         elif graph == "sleep":
             data.append((date, response.sleep))
-            title = "Sleep Score over Time"
+            title = "Sleep Score Over Time"
         elif graph == "social":
             data.append((date, response.social))
-            title = "Social Score over Time"
+            title = "Social Score Over Time"
         elif graph == "academic":
-            title = "Academic Score over Time"
+            title = "Academic Score Over Time"
             data.append((date, response.academic))
         elif graph == "activity":
-            title = "Activity Score over Time"
+            title = "Activity Score Over Time"
             data.append((date, response.activity))
-        else:
-            title = "Sleep Score over Time"
-            data.append((date, response.sleep))
 
     labels = [row[0] for row in data]
     values = [row[1] for row in data]
 
-    avg = sum(values) / len(values) if values else 0
+    avg = round(sum(values) / len(values),2) if values else 0
 
-    LOW_THRESHOLD = 2
-
-    totals = {
-        "stress": 0,
-        "sleep": 0,
-        "social": 0,
-        "academic": 0,
-        "activity": 0
-              }
-
-    count = len(user_responses)
-
-    for r in user_responses:
-        totals["stress"] += r.stress
-        totals["sleep"] += r.sleep
-        totals["social"] += r.social
-        totals["academic"] += r.academic
-        totals["activity"] += r.activity
-
-    averages = {
-        k: (totals[k] / count) if count > 0 else 0
-        for k in totals
-    }
-
-    low_categories = [
-        k for k, v in averages.items()
-        if v <= LOW_THRESHOLD
-    ]
-
-    if low_categories:
-        resources = Resource.query.filter(
-            Resource.category.in_(low_categories)
-        ).all()
-    else:
-        resources = []
-
-    return render_template("tracking.html", labels=labels, values=values, title=title, avg=avg, graph_option=graph, resources = resources, low_categories=low_categories )
+    return render_template("tracking.html", labels=labels, values=values, title=title, avg=avg, graph_option=graph)
 
 @app.route("/admin/resources", methods=['GET', 'POST'])
 @login_required
@@ -297,7 +277,3 @@ def delete_resource(resource_id):
     db.session.commit()
     flash('You have successfully deleted the resource')
     return redirect(url_for('add_resources'))
-
-from app.models import User
-
-

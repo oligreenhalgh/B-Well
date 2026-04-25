@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, PasswordField, RadioField, SubmitField, IntegerField, TextAreaField, DateField
+from wtforms import StringField, EmailField, PasswordField, RadioField, SubmitField, IntegerField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, NumberRange
 
 #Custom validator to check if email is a University of Birmingham email address
@@ -47,6 +47,6 @@ class LoginForm(FlaskForm):
 
 class ResourceForm(FlaskForm):
     title = StringField("Resource Title", validators=[DataRequired(message="Title Required")])
-    category = StringField("Category", validators=[DataRequired(message='Category Required')])
+    category = SelectField("Category", choices =[("stress", "Stress"), ("sleep", "Sleep"), ("social", "Social"), ("academic", "Academic"), ("activity", "Activity")], validators=[DataRequired(message='Category Required')])
     url = StringField("Website link", validators=[DataRequired(message="Website link Required")])
     submit = SubmitField("Submit")
