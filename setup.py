@@ -11,7 +11,15 @@ def setup():
     student.set_password('Password1')
     db.session.add(student)
 
-    admin = User(id = 2, username='admin', email='admin@bham.ac.uk', is_admin=True)
+    student2 = User(id = 2, username='test2', email='test2@student.bham.ac.uk')
+    student2.set_password('Password1')
+    db.session.add(student2)
+
+    student3 = User(id = 3, username='test3', email='test3@student.bham.ac.uk')
+    student3.set_password('Password1')
+    db.session.add(student3)
+
+    admin = User(id = 4, username='admin', email='admin@bham.ac.uk', is_admin=True)
     admin.set_password('Password1')
     db.session.add(admin)
 
