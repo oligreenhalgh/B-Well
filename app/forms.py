@@ -28,10 +28,10 @@ class RegistrationForm(FlaskForm):
 
 class WellbeingForm(FlaskForm):
     stress = IntegerField("Stress Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
-    sleep = IntegerField("Sleep Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
-    social = IntegerField("Social Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
-    academic = IntegerField("Academic Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
-    activity = IntegerField("Activity Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    sleep = IntegerField("Sleep Quality", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    social = IntegerField("Social Life", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    academic = IntegerField("Academic Engagement", validators=[DataRequired(), NumberRange(min=1, max=5)])
+    activity = IntegerField("Physical Activity Level", validators=[DataRequired(), NumberRange(min=1, max=5)])
 
     notes = TextAreaField("Additional Notes (Optional)")
 

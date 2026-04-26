@@ -52,6 +52,9 @@ def setup():
     not_6 = Notification(notification_id = 6, created_at = datetime(2026, 4, 24, 14, 30, 0), read = True, student_id = 1)
     db.session.add(not_6)
 
+    not_7 = Notification(notification_id=7, created_at=datetime(2026, 4, 25, 14, 30, 0), read=True, student_id=1)
+    db.session.add(not_7)
+
     #Wellbeing Forms
 
     form_1 = WellbeingResponse(wellbeing_response_id=1, notification_id=1, student_id=1,date=datetime(2026, 4, 19, 14, 40, 0),stress=2,sleep=4,social=3,academic=3,activity=3)
@@ -72,5 +75,7 @@ def setup():
     form_6 = WellbeingResponse(wellbeing_response_id=6, notification_id=6, student_id=1,date=datetime(2026, 4, 24, 14, 40, 0),stress=4,sleep=2,social=2,academic=4,activity=3)
     db.session.add(form_6)
 
+    form_7 = WellbeingResponse(wellbeing_response_id=7, notification_id=7, student_id=1, date=datetime(2026, 4, 25, 14, 40, 0), stress=4, sleep=3, social=2, academic=5, activity=3)
+    db.session.add(form_7)
 
     db.session.commit()
