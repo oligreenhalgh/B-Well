@@ -1,6 +1,6 @@
 # B-Well
 
-A daily wellbeing tracking web app for University of Birmingham students. Students log short daily check-ins across five dimensions (stress, sleep, social, academic, activity) and view their trends over time.
+A daily wellbeing tracking web app for University of Birmingham students. Students log short daily check-ins across five categories (stress level, sleep quality, social life, academic engagement, and activity level) and view their trends over time.
 
 <p align="center">
   <img src="app/static/image/BwellLogolong.svg" alt="B-Well logo" width="400">
@@ -19,17 +19,14 @@ A daily wellbeing tracking web app for University of Birmingham students. Studen
 </p>
 
 ## Features
-...
-
-
-## Features
 
 - University-email-gated registration (`@student.bham.ac.uk` / `@bham.ac.uk`)
 - Secure login/logout via Flask-Login with hashed passwords
 - Daily wellbeing check-in (5 metrics on a 1–5 scale + optional notes)
-- Daily check-in per day rule enforced in-app
+- Resource recommendation logic
+- Daily check-in reminders by in-app notification (via APScheduler)
 - Historical visualisation with Chart.js; switch between metrics to view trends
-- Automatic daily reminder notifications (via APScheduler)
+- Admin dashboard to manage resources using CRUD
 - Persistent SQLite storage
 
 ## Tech stack
@@ -58,6 +55,7 @@ B-Well/
 │                         #   wellbeing_form, score, tracking)
 ├── config.py             # Flask configuration
 ├── requirements.txt      # Python dependencies
+├── setup.py              # Populate database
 └── app.db                # SQLite database
 ```
 
@@ -118,7 +116,7 @@ Then open <http://127.0.0.1:5000> in your browser.
 1. Visit `/registration` and create an account with your University of Birmingham email.
 2. Log in at `/login`.
 3. Submit your daily check-in at `/wellbeing` — rate each of stress, sleep, social, academic, and activity from 1 to 5, add optional notes, and submit.
-4. View your overall score on the confirmation page.
+4. View your average score and resource recommendations on the confirmation page.
 5. Visit `/tracking` to see your history charted over time; use the dropdown to switch metrics.
 
 ## Data model
@@ -126,7 +124,7 @@ Then open <http://127.0.0.1:5000> in your browser.
 - **User** — account details, hashed password, owns responses and notifications.
 - **WellbeingResponse** — one check-in per student per day: stress, sleep, social, academic, activity, notes, date.
 - **Notification** — in-app reminders, generated on a schedule.
-- **Resource** — reserved for future wellbeing resource library.
+- **Resource** — wellbeing resource library.
 
 ## Validation rules
 
@@ -138,8 +136,8 @@ Then open <http://127.0.0.1:5000> in your browser.
 
 ## Documentation
 
-Documentation will be submitted to the repository on submission of Course Work
+Documentation will be submitted to the repository on submission of course work
 
 ## License
 
-This is a piece of University Coursework
+This is a piece of university coursework
