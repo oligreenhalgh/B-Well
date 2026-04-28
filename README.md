@@ -15,7 +15,7 @@ A daily wellbeing tracking web app for University of Birmingham students. Studen
 ## Preview
 
 <p align="center">
-  <img src="app/static/image/B%20WELL%20HOME%20PAGE.png" alt="B-Well home page" width="700">
+  <img src="app/static/image/Screenshot 2026-04-28 065602.png" alt="B-Well home page" width="700">
 </p>
 
 ## Features
